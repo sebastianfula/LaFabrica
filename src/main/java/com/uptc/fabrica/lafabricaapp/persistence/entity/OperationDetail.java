@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CurrentTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "detalle_operacion")
@@ -25,4 +28,8 @@ public class OperationDetail {
     @ManyToOne
     @JoinColumn(name = "id_persona", nullable = false)
     private Person person;
+
+    @CurrentTimestamp
+    @Column(name = "fecha_registro")
+    private LocalDateTime registerDate;
 }
