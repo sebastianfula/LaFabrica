@@ -105,20 +105,22 @@ CREATE TABLE IF NOT EXISTS DETALLE_ORDEN (
 * Tabla: HABILIDAD_TRABAJADOR 
 */
 CREATE TABLE IF NOT EXISTS HABILIDAD_TRABAJADOR (
-    id_habilidad INT ,
-    id_persona INT,
-    PRIMARY KEY (id_habilidad, id_persona),
+    id_habilidad_trabajador INT AUTO_INCREMENT PRIMARY KEY,
+    id_habilidad INT NOT NULL,
+    id_persona INT NOT NULL,
+	fecha_registro DATETIME NOT NULL,
     FOREIGN KEY (id_habilidad) REFERENCES HABILIDAD(id_habilidad),
     FOREIGN KEY (id_persona) REFERENCES PERSONA(id_persona)
 );
 
 /*
-* Tabla: HABILIDAD_TRABAJADOR 
+* Tabla: DETALLE_OPERACION 
 */
 CREATE TABLE IF NOT EXISTS DETALLE_OPERACION (
-    id_maquina INT,
-    id_persona INT,
-    PRIMARY KEY (id_maquina, id_persona),
+    id_detalle_operacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_maquina INT NOT NULL,
+    id_persona INT NOT NULL,
+	fecha_registro DATETIME NOT NULL,
     FOREIGN KEY (id_maquina) REFERENCES MAQUINA(id_maquina),
     FOREIGN KEY (id_persona) REFERENCES PERSONA(id_persona)
 );
