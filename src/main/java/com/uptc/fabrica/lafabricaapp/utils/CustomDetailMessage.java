@@ -1,4 +1,4 @@
-package com.uptc.fabrica.lafabricaapp.persistence.utils;
+package com.uptc.fabrica.lafabricaapp.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

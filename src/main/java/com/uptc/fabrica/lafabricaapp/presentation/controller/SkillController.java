@@ -1,8 +1,8 @@
 package com.uptc.fabrica.lafabricaapp.presentation.controller;
 
 import com.uptc.fabrica.lafabricaapp.persistence.entity.Skill;
-import com.uptc.fabrica.lafabricaapp.persistence.service.implementation.SkillServiceImpl;
-import com.uptc.fabrica.lafabricaapp.persistence.utils.CustomDetailMessage;
+import com.uptc.fabrica.lafabricaapp.service.implementation.SkillServiceImpl;
+import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
