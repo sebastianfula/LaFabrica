@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ISkillService {
     CustomDetailMessage createSkill(Skill skill);
 
-    Optional<Skill> getSkillById(Long id);
+    CustomDetailMessage getSkillById(Long id);
 
     CustomDetailMessage getAllSkills();
 

@@ -9,7 +9,7 @@ public interface IMaterialService {
 
     CustomDetailMessage createMaterial(Material material);
 
-    Optional<Material> getMaterialById(Long id);
+    CustomDetailMessage getMaterialById(Long id);
 
     CustomDetailMessage getAllMaterials();
 

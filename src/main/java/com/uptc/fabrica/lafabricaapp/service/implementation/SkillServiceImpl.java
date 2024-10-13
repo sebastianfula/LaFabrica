@@ -4,14 +4,15 @@ import com.uptc.fabrica.lafabricaapp.persistence.entity.Skill;
 import com.uptc.fabrica.lafabricaapp.persistence.repository.ISkillRepository;
 import com.uptc.fabrica.lafabricaapp.service.interfaces.ISkillService;
 import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -38,12 +39,19 @@ public class SkillServiceImpl implements ISkillService {
     }
 
     @Override
-    public Optional<Skill> getSkillById(Long id) {
+    public CustomDetailMessage getSkillById(Long id) {
         try {
-            return repository.findById(id);
+            Skill skill = repository.findById(id)
+                    .orElseThrow(() -> {
+                        log.error("No se encontró la habilidad con ID: {}", id);
+                        return new EntityNotFoundException("Habilidad no encontrada");
+                    });
+            return new CustomDetailMessage(HttpStatus.OK.value(), "Habilidad encontrada", List.of(skill));
+        } catch (EntityNotFoundException e) {
+            return new CustomDetailMessage(HttpStatus.OK.value(), "Habilidad no encontrada", Collections.emptyList());
         } catch (Exception e) {
-            log.error("Error al consultar la habilidad con ID: " + id, e);
-            return Optional.empty();
+            log.error("Error al obtener la habilidad con ID {}: {}", id, e.getMessage());
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error al obtener la habilidad", Collections.emptyList());
         }
     }
 
