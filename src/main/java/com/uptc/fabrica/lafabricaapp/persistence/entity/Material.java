@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Material {
     @Column(name = "nombre_material", nullable = false, length = 45)
     private String materialName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "material")
     private Set<ProductType> productTypes;
 }
