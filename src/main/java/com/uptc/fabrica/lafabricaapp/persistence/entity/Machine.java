@@ -37,5 +37,5 @@ public class Machine {
 
     @JsonIgnore
     @OneToMany(mappedBy = "machine")
-    private List<ProductType> productTypes;
+    private List<Product> products;
 }
