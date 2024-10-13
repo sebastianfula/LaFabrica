@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,13 +26,10 @@ public class ProductType {
     @JoinColumn(name = "id_material", nullable = false)
     private Material material;
 
-    @ManyToOne
-    @JoinColumn(name = "id_maquina", nullable = false)
-    private Machine machine;
-
     @Column(name = "nombre_tipo_producto", nullable = false, length = 45)
     private String productTypeName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "productType")
     private List<Product> products;
 }
