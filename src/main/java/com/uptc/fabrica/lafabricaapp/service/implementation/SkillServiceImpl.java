@@ -1,9 +1,9 @@
-package com.uptc.fabrica.lafabricaapp.persistence.service.implementation;
+package com.uptc.fabrica.lafabricaapp.service.implementation;
 
 import com.uptc.fabrica.lafabricaapp.persistence.entity.Skill;
 import com.uptc.fabrica.lafabricaapp.persistence.repository.ISkillRepository;
-import com.uptc.fabrica.lafabricaapp.persistence.service.interfaces.ISkillService;
-import com.uptc.fabrica.lafabricaapp.persistence.utils.CustomDetailMessage;
+import com.uptc.fabrica.lafabricaapp.service.interfaces.ISkillService;
+import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
