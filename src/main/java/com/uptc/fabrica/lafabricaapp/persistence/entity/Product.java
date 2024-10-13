@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,10 @@ public class Product {
     @Column(name = "descripcion_producto", nullable = false, length = 85)
     private String productDescription;
 
+    @Column(name = "precio_producto")
+    private Double productPrice;
+
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private Set<OrderDetail> orderDetails;
 }
