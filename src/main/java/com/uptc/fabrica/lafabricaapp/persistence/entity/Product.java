@@ -25,6 +25,10 @@ public class Product {
     @JoinColumn(name = "id_tipo_producto", nullable = false)
     private ProductType productType;
 
+    @ManyToOne
+    @JoinColumn(name = "id_maquina", nullable = false)
+    private Machine machine;
+
     @Column(name = "nombre_producto", nullable = false, length = 85)
     private String productName;
 
