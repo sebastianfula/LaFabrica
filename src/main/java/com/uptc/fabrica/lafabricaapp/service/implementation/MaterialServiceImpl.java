@@ -4,6 +4,7 @@ import com.uptc.fabrica.lafabricaapp.persistence.entity.Material;
 import com.uptc.fabrica.lafabricaapp.persistence.repository.IMaterialRepository;
 import com.uptc.fabrica.lafabricaapp.service.interfaces.IMaterialService;
 import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,12 +42,19 @@ public class MaterialServiceImpl implements IMaterialService {
     }
 
     @Override
-    public Optional<Material> getMaterialById(Long id) {
+    public CustomDetailMessage getMaterialById(Long id) {
         try {
-            return repository.findById(id);
+            Material material = repository.findById(id)
+                    .orElseThrow(() -> {
+                        log.error("No se encontró el material con ID: {}", id);
+                        return new EntityNotFoundException("Material no encontrado");
+                    });
+            return new CustomDetailMessage(HttpStatus.OK.value(), "Material encontrado", List.of(material)); // Lista inmutable
+        } catch (EntityNotFoundException e) {
+            return new CustomDetailMessage(HttpStatus.OK.value(), "Material no encontrado", Collections.emptyList());
         } catch (Exception e) {
-            log.error("Error al consultar el material con ID: " + id, e);
-            return Optional.empty();
+            log.error("Error al obtener el material con ID {}: {}", id, e.getMessage());
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error al obtener el material", Collections.emptyList());
         }
     }
 

@@ -1,16 +1,12 @@
 package com.uptc.fabrica.lafabricaapp.presentation.controller;
 
 import com.uptc.fabrica.lafabricaapp.persistence.entity.Material;
-import com.uptc.fabrica.lafabricaapp.persistence.entity.Skill;
 import com.uptc.fabrica.lafabricaapp.service.implementation.MaterialServiceImpl;
-import com.uptc.fabrica.lafabricaapp.service.implementation.SkillServiceImpl;
 import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/materials")
@@ -26,12 +22,12 @@ public class MaterialController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Material>> getMaterialById(@PathVariable Long id) {
-        Optional<Material> material = materialService.getMaterialById(id);
-        if (material.isPresent()) {
-            return new ResponseEntity<>(material, HttpStatus.OK);
+    public ResponseEntity<CustomDetailMessage> getMaterialById(@PathVariable Long id) {
+        CustomDetailMessage response = materialService.getMaterialById(id);
+        if (response.getCode() == HttpStatus.OK.value()) {
+            return ResponseEntity.ok(response);
         } else {
-            return new ResponseEntity<>(Optional.empty(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
     }
 

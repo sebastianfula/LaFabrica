@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/skills")
 public class SkillController {
@@ -24,10 +22,13 @@ public class SkillController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Skill> getSkillById(@PathVariable Long id) {
-        Optional<Skill> skill = skillService.getSkillById(id);
-        return skill.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<CustomDetailMessage> getSkillById(@PathVariable Long id) {
+        CustomDetailMessage response = skillService.getSkillById(id);
+        if (response.getCode() == HttpStatus.OK.value()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
     }
 
     @GetMapping
