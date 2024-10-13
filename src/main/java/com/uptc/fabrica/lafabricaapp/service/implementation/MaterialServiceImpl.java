@@ -1,7 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.service.implementation;
 
 import com.uptc.fabrica.lafabricaapp.persistence.entity.Material;
-import com.uptc.fabrica.lafabricaapp.persistence.entity.Skill;
 import com.uptc.fabrica.lafabricaapp.persistence.repository.IMaterialRepository;
 import com.uptc.fabrica.lafabricaapp.service.interfaces.IMaterialService;
 import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
@@ -11,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,16 +25,19 @@ public class MaterialServiceImpl implements IMaterialService {
     public CustomDetailMessage createMaterial(Material materialRequest) {
         try {
             Material material = repository.saveAndFlush(materialRequest);
-            ArrayList<Material> materialList = new ArrayList<>();
-            materialList.add(material);
-            return new CustomDetailMessage(HttpStatus.CREATED.value(),
+
+            return new CustomDetailMessage(
+                    HttpStatus.CREATED.value(),
                     "Material insertado correctamente",
-                    materialList);
+                    List.of(material)
+            );
         } catch (Exception e) {
             log.error("Error al guardar el material.", e);
-            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Error: No ha podido insertar la habilidad " + e.getMessage(),
-                    new ArrayList<>());
+            return new CustomDetailMessage(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error: No se pudo insertar el material. " + e.getMessage(),
+                    Collections.emptyList()
+            );
         }
     }
 
@@ -74,23 +77,30 @@ public class MaterialServiceImpl implements IMaterialService {
             try {
                 material.setId(id);
                 Material updatedMaterial = repository.saveAndFlush(material);
-                ArrayList<Material> materialList = new ArrayList<>();
-                materialList.add(updatedMaterial);
-                return new CustomDetailMessage(HttpStatus.OK.value(),
+
+                return new CustomDetailMessage(
+                        HttpStatus.OK.value(),
                         "Material actualizado correctamente",
-                        materialList);
+                        List.of(updatedMaterial)
+                );
             } catch (Exception e) {
-                log.error("Error al actualizar el material con ID: " + id, e);
-                return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        "Error: No se pudo actualizar el material." + e.getMessage(),
-                        new ArrayList<>());
+                log.error("Error al actualizar el material con ID: {}", id, e);
+                return new CustomDetailMessage(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Error: No se pudo actualizar el material. " + e.getMessage(),
+                        Collections.emptyList()
+                );
             }
         } else {
-            return new CustomDetailMessage(HttpStatus.NOT_FOUND.value(),
-                    "Error: La habilidad con ID " + id + " no existe",
-                    new ArrayList<>());
+            log.warn("El material con ID: {} no existe", id);
+            return new CustomDetailMessage(
+                    HttpStatus.NOT_FOUND.value(),
+                    "Error: El material con ID " + id + " no existe",
+                    Collections.emptyList()
+            );
         }
     }
+
 
     @Override
     public void deleteMaterial(Long id) {
