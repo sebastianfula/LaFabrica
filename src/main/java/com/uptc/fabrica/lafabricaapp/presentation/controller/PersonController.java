@@ -58,9 +58,9 @@ public class PersonController {
         CustomDetailMessage response = personService.updatePerson(id, person);
         if (response.getCode() == HttpStatus.OK.value()) {
             return ResponseEntity.ok(response);
-        } else if (response.getCode() == HttpStatus.NOT_FOUND.value()) {
+        } else if (response.getCode() == HttpStatus.OK.value()) {
             log.warn("Persona no encontrada con ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } else {
             log.error("Error al actualizar la persona con ID: {}", id);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -72,9 +72,9 @@ public class PersonController {
         CustomDetailMessage response = personService.deletePerson(id);
         if (response.getCode() == HttpStatus.OK.value()) {
             return ResponseEntity.ok(response);
-        } else if (response.getCode() == HttpStatus.NOT_FOUND.value()) {
+        } else if (response.getCode() == HttpStatus.OK.value()) {
             log.warn("Persona no encontrada con ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } else {
             log.error("Error al eliminar la persona con ID: {}", id);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

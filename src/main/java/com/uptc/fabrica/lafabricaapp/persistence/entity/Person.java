@@ -47,4 +47,8 @@ public class Person {
     @JsonIgnore
     @OneToMany(mappedBy = "person")
     private List<Order> orders;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL)
+    private List<WorkerSkill> workerSkills;
 }
