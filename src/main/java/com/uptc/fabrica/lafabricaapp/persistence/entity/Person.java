@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,7 @@ public class Person {
     @Column(name = "es_trabajador", nullable = false)
     private Boolean isWorker;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "person")
     private List<Order> orders;
 }
