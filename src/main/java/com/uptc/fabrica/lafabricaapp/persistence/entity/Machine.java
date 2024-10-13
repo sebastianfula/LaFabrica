@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,7 @@ public class Machine {
     @Column(name = "fecha_compra", nullable = false)
     private LocalDateTime purchaseDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "machine")
     private List<ProductType> productTypes;
 }
