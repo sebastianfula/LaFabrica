@@ -52,6 +52,7 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
                 detail.setUnitPrice(BigDecimal.valueOf(product.getProductPrice()));
 
                 savedDetails.add(orderDetailRepository.save(detail));
+
             }
 
             return new CustomDetailMessage(HttpStatus.CREATED.value(),
