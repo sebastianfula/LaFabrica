@@ -1,5 +1,6 @@
 package com.uptc.fabrica.lafabricaapp.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class OrderDetail {
     @Column(name = "id_detalle_orden")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_orden", nullable = false)
     private Order order;
