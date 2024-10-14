@@ -1,14 +1,6 @@
-services:
-  app:
-    build: .
-    container_name: fabrica_app
-    ports:
-      - "8081:8081"
-    depends_on:
-      - db
-    networks:
-      - fabrica-network
+version: '3.8'
 
+services:
   db:
     image: mysql:8.0
     container_name: fabrica_db
@@ -19,10 +11,21 @@ services:
       MYSQL_PASSWORD: fabrica123
     ports:
       - "3307:3306"
-    networks:
-      - fabrica-network
     volumes:
       - db_data:/var/lib/mysql
+      - ./src/main/resources/database/db_patch-fabrica.sql:/docker-entrypoint-initdb.d/db_patch-fabrica.sql
+    networks:
+      - fabrica-network
+
+  app:
+    build: .
+    container_name: fabrica_app
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    networks:
+      - fabrica-network
 
 networks:
   fabrica-network:
@@ -30,3 +33,4 @@ networks:
 
 volumes:
   db_data:
+
