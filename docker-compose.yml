@@ -24,6 +24,14 @@ services:
       - "8081:8081"
     depends_on:
       - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/fabrica_db
+      SPRING_DATASOURCE_USERNAME: usr_fabrica
+      SPRING_DATASOURCE_PASSWORD: fabrica123
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SERVER_PORT: 8081
     networks:
       - fabrica-network
 
@@ -33,4 +41,3 @@ networks:
 
 volumes:
   db_data:
-

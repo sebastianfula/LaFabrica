@@ -2,15 +2,16 @@ spring:
   application:
     name: LaFabricaRest
   datasource:
-    url: jdbc:mysql://db:3306/fabrica_db
-    username: usr_fabrica
-    password: fabrica123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://db:3306/fabrica_db}
+    username: ${SPRING_DATASOURCE_USERNAME:usr_fabrica}
+    password: ${SPRING_DATASOURCE_PASSWORD:fabrica123}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
+
