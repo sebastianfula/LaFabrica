@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    container_name: fabrica_app
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    networks:
+      - fabrica-network
+
+  db:
+    image: mysql:8.0
+    container_name: fabrica_db
+    environment:
+      MYSQL_ROOT_PASSWORD: fabrica123
+      MYSQL_DATABASE: fabrica_db
+      MYSQL_USER: usr_fabrica
+      MYSQL_PASSWORD: fabrica123
+    ports:
+      - "3307:3306"
+    networks:
+      - fabrica-network
+    volumes:
+      - db_data:/var/lib/mysql
+
+networks:
+  fabrica-network:
+    driver: bridge
+
+volumes:
+  db_data:

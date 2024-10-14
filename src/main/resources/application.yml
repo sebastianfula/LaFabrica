@@ -2,7 +2,7 @@ spring:
   application:
     name: LaFabricaRest
   datasource:
-    url: jdbc:mysql://localhost:3306/fabrica_db
+    url: jdbc:mysql://db:3306/fabrica_db
     username: usr_fabrica
     password: fabrica123
     driver-class-name: com.mysql.cj.jdbc.Driver
