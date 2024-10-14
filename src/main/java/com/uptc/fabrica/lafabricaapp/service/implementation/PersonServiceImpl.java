@@ -18,7 +18,7 @@ import java.util.List;
 public class PersonServiceImpl implements IPersonService {
 
     @Autowired
-    private IPersonRepository personRepository;
+    public IPersonRepository personRepository;
 
     @Override
     public CustomDetailMessage createPerson(Person person) {

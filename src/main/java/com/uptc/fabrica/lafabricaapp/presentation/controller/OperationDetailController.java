@@ -18,7 +18,7 @@ public class OperationDetailController {
     @Autowired
     private IOperationDetailService operationDetailService;
 
-    @GetMapping("/{idPerson}")
+    @GetMapping("/{personId}")
     public ResponseEntity<CustomDetailMessage<Order>> getOperationByIdPerson(@PathVariable Long personId) {
         CustomDetailMessage<Order> response = operationDetailService.getOperationDetailByPerson(personId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCode()));
@@ -32,11 +32,12 @@ public class OperationDetailController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCode()));
     }
 
-    @PutMapping("/{personId}/{machineId}")
+    @PutMapping("{operationId}/{personId}/{machineId}")
     public ResponseEntity<CustomDetailMessage<Order>> updateOperationDetail(
+            @PathVariable Long operationId,
             @PathVariable Long personId,
             @PathVariable Long machineId) {
-        CustomDetailMessage<Order> response = operationDetailService.updateOperationDetail(personId,machineId);
+        CustomDetailMessage<Order> response = operationDetailService.updateOperationDetail(operationId,machineId,personId);
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getCode()));
     }
 

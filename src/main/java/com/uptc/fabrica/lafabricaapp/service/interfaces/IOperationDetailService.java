@@ -12,7 +12,7 @@ public interface IOperationDetailService {
 
     CustomDetailMessage getOperationDetailByPerson(Long personId);
 
-    CustomDetailMessage updateOperationDetail(Long machineId, Long personId);
+    CustomDetailMessage updateOperationDetail(Long operationId, Long machineId, Long personId);
 
     CustomDetailMessage deleteOperationDetail(Long personId, Long machineId);
 
