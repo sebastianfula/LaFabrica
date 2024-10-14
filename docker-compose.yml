@@ -1,14 +1,6 @@
-services:
-  app:
-    build: .
-    container_name: fabrica_app
-    ports:
-      - "8081:8081"
-    depends_on:
-      - db
-    networks:
-      - fabrica-network
+version: '3.8'
 
+services:
   db:
     image: mysql:8.0
     container_name: fabrica_db
@@ -19,10 +11,29 @@ services:
       MYSQL_PASSWORD: fabrica123
     ports:
       - "3307:3306"
-    networks:
-      - fabrica-network
     volumes:
       - db_data:/var/lib/mysql
+      - ./src/main/resources/database/db_patch-fabrica.sql:/docker-entrypoint-initdb.d/db_patch-fabrica.sql
+    networks:
+      - fabrica-network
+
+  app:
+    build: .
+    container_name: fabrica_app
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/fabrica_db
+      SPRING_DATASOURCE_USERNAME: usr_fabrica
+      SPRING_DATASOURCE_PASSWORD: fabrica123
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SERVER_PORT: 8081
+    networks:
+      - fabrica-network
 
 networks:
   fabrica-network:
