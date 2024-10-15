@@ -7,6 +7,7 @@ import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -110,16 +111,31 @@ public class MaterialServiceImpl implements IMaterialService {
 
 
     @Override
-    public void deleteMaterial(Long id) {
+    public CustomDetailMessage deleteMaterial(Long id) {
         try {
             if (repository.existsById(id)) {
                 repository.deleteById(id);
-                log.info("Material con ID: " + id + " eliminado correctamente.");
+                log.info("Material eliminado exitosamente: {}", id);
+                return new CustomDetailMessage(HttpStatus.OK.value(),
+                        "Material con ID: " + id + " eliminado correctamente.",
+                        new ArrayList<>());
             } else {
                 log.warn("Error: El material con ID " + id + " no existe.");
+                return new CustomDetailMessage(HttpStatus.NOT_FOUND.value(),
+                        "Error: El Material con ID " + id + " no existe.",
+                        new ArrayList<>());
             }
-        } catch (Exception e) {
+        } catch (DataIntegrityViolationException e) {
             log.error("Error al eliminar el material con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar el material con ID: " + id +
+                            ". No se puede eliminar porque está siendo utilizada por otras entidades.",
+                    new ArrayList<>());
+        } catch (Exception e) {
+            log.error("Error al eliminar la material con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la material con ID: ",
+                    new ArrayList<>());
         }
     }
 }

@@ -12,5 +12,5 @@ public interface ISkillService {
 
     CustomDetailMessage updateSkill(Long id, Skill skill);
 
-    void deleteSkill(Long id);
+    CustomDetailMessage deleteSkill(Long id);
 }

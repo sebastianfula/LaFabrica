@@ -44,8 +44,8 @@ public class MaterialController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable Long id) {
-        materialService.deleteMaterial(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<CustomDetailMessage> deleteSkill(@PathVariable Long id) {
+        CustomDetailMessage responseMessage = materialService.deleteMaterial(id);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getCode()));
     }
 }
