@@ -7,6 +7,7 @@ import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -89,18 +90,32 @@ public class MachineServiceImpl implements IMachineService {
     }
 
     @Override
-    public void deleteMachine(Long id) {
+    public CustomDetailMessage deleteMachine(Long id) {
         try {
             if (machineRepository.existsById(id)) {
                 machineRepository.deleteById(id);
                 log.info("Máquina eliminada exitosamente: {}", id);
+                return new CustomDetailMessage(HttpStatus.OK.value(),
+                        "Maquina con ID: " + id + " eliminada correctamente.",
+                        new ArrayList<>());
             } else {
-                log.error("No se encontró la máquina con ID: {}", id);
-                throw new EntityNotFoundException("Máquina no encontrada");
+                log.warn("Error: La maquina con ID " + id + " no existe.");
+                return new CustomDetailMessage(HttpStatus.NOT_FOUND.value(),
+                        "Error: La maquina con ID " + id + " no existe.",
+                        new ArrayList<>());
             }
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error al eliminar la maquina con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la maquina con ID: " + id +
+                            ". No se puede eliminar porque está siendo utilizada por otras entidades.",
+                    new ArrayList<>());
         } catch (Exception e) {
-            log.error("Error al eliminar la máquina con ID {}: {}", id, e.getMessage());
-            throw new RuntimeException("Error al eliminar la máquina");
+            log.error("Error al eliminar la maquina con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la maquina con ID: ",
+                    new ArrayList<>());
         }
+
     }
 }

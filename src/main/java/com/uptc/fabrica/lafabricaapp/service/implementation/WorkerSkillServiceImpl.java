@@ -50,14 +50,13 @@ public class WorkerSkillServiceImpl implements IWorkerSkillService {
                     .collect(Collectors.toSet());
 
             for (Skill skill : skills) {
-                // Busca la habilidad en la base de datos
                 Skill existingSkill = skillRepository.findById(skill.getId())
                         .orElseThrow(() -> new IllegalArgumentException("Error: Habilidad no encontrada."));
 
                 if (existingSkillIds.contains(existingSkill.getId())) {
                     log.warn("La habilidad con ID {} ya está asociada al trabajador {}", existingSkill.getId(), workerId);
                     return new CustomDetailMessage(HttpStatus.OK.value(),
-                            "La habilidad  ya está asociada al trabajador .",
+                            "La habilidad "+existingSkill.getId()+" ya está asociada al trabajador .",
                             Collections.emptyList());
                 }
 

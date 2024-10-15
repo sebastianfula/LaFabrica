@@ -12,9 +12,11 @@ import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -179,11 +181,17 @@ public class ProductServiceImpl implements IProductService {
                         "Error: Producto no encontrado con ID " + id,
                         Collections.emptyList());
             }
-
             productRepository.deleteById(id);
+            log.info("Producto eliminado exitosamente: {}", id);
             return new CustomDetailMessage(HttpStatus.OK.value(),
                     "Producto eliminado correctamente",
                     Collections.emptyList());
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error al eliminar la persona con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la persona con ID: " + id +
+                            ". No se puede eliminar porque está siendo utilizada por otras entidades.",
+                    new ArrayList<>());
         } catch (Exception e) {
             log.error("Error al eliminar el producto: {}", e.getMessage(), e);
             return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
