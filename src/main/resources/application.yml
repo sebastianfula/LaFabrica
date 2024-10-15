@@ -12,6 +12,14 @@ spring:
     properties:
       hibernate:
         dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.MySQLDialect}
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+    swagger-ui:
+      base-url: /swagger-ui.html
+
 server:
   port: ${SERVER_PORT:8081}
 
