@@ -13,5 +13,5 @@ public interface IMaterialService {
 
     CustomDetailMessage updateMaterial(Long id, Material material);
 
-    void deleteMaterial(Long id);
+    CustomDetailMessage deleteMaterial(Long id);
 }

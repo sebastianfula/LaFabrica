@@ -17,70 +17,74 @@ import java.util.List;
 @Service
 public class OperationDetailServiceImpl implements IOperationDetailService {
 
-
     @Autowired
     private IOperationDetailRepository operationDetailRepository;
 
     @Autowired
-    private PersonServiceImpl personService;
+    private IPersonService personService;
 
     @Autowired
-    private MachineServiceImpl machineService;
-
+    private IMachineService machineService;
 
     @Override
     public CustomDetailMessage addNewOperationDetails(Long personId, Long machineId) {
-        try{
-            Person person = (Person) personService.getPersonById(personId).getData().get(0);
-            if(!person.getIsWorker()){
+        try {
+
+            Person person = getValidPerson(personId);
+            Machine machine = getValidMachine(machineId);
+
+            if (operationDetailRepository.findByPersonIdAndMachineId(personId, machineId).isPresent()) {
                 return new CustomDetailMessage(HttpStatus.OK.value(),
-                        "No se puede actualizar la operacion ya que la persona no es un trabajador",
+                        String.format("La persona %s ya es operaria de la máquina con número de serie %s",
+                                person.getFullName(), machine.getSerialNumber()),
                         Collections.emptyList());
             }
-            Machine machine = (Machine) machineService.getMachineById(machineId).getData().get(0);
-            if(operationDetailRepository.findByPersonIdAndMachineId(personId, machineId).isPresent()){
-                return new CustomDetailMessage(HttpStatus.OK.value(),
-                        "La persona "+ person.getFullName()+ " ya es operaria de la maquina con numero de serie "+machine.getSerialNumber(),
-                        Collections.emptyList());
-            }
+
             OperationDetail operationDetail = new OperationDetail();
             operationDetail.setPerson(person);
             operationDetail.setMachine(machine);
-
             operationDetailRepository.save(operationDetail);
 
             return new CustomDetailMessage(HttpStatus.CREATED.value(),
-                    "Detalles de la orden agregados correctamente",
+                    "Detalles de la operación agregados correctamente",
                     List.of(operationDetail));
-        }catch (Exception ex){
-            log.error("Error al crear el detalle de operacion: {}", ex.getMessage(), ex);
+
+        } catch (IllegalArgumentException ex) {
+            log.warn("Error al agregar detalle de operación: {}", ex.getMessage());
+            return new CustomDetailMessage(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), Collections.emptyList());
+
+        } catch (Exception ex) {
+            log.error("Error al crear el detalle de operación: {}", ex.getMessage(), ex);
             return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Error: No se pudo crear el detalle de operacion. " + ex.getMessage(),
+                    "Error: No se pudo crear el detalle de operación. " + ex.getMessage(),
                     Collections.emptyList());
         }
     }
 
     @Override
     public CustomDetailMessage getOperationDetailByPerson(Long personId) {
-        try{
-            Person person = (Person) personService.getPersonById(personId).getData().get(0);
-            if(!person.getIsWorker()){
-                return new CustomDetailMessage(HttpStatus.OK.value(),
-                        "La persona consultada no es un trabajador",
-                        Collections.emptyList());
-            }
-            List<OperationDetail> listOperationDetail = operationDetailRepository.findByPersonId(person.getId());
-            if(listOperationDetail.isEmpty()){
-                return new CustomDetailMessage(HttpStatus.OK.value(),
-                        "Trabajador sin maquinas operadas ",
-                        Collections.emptyList());
-            }
-            return new CustomDetailMessage(HttpStatus.OK.value(), "Detalles de operacion retornados correctamente", listOperationDetail);
+        try {
+            Person person = getValidPerson(personId);
+            List<OperationDetail> operationDetails = operationDetailRepository.findByPersonId(person.getId());
 
-        }catch (Exception ex){
-            log.error("Error al buscar la operacion: {}", ex.getMessage(), ex);
+            if (operationDetails.isEmpty()) {
+                return new CustomDetailMessage(HttpStatus.OK.value(),
+                        "El trabajador no tiene máquinas asignadas para operar",
+                        Collections.emptyList());
+            }
+
+            return new CustomDetailMessage(HttpStatus.OK.value(),
+                    "Detalles de operación retornados correctamente",
+                    operationDetails);
+
+        } catch (IllegalArgumentException ex) {
+            log.warn("Error al buscar detalles de operación: {}", ex.getMessage());
+            return new CustomDetailMessage(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), Collections.emptyList());
+
+        } catch (Exception ex) {
+            log.error("Error al buscar los detalles de operación: {}", ex.getMessage(), ex);
             return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Error: No se puedieron encontrar los detalles de operacion. " + ex.getMessage(),
+                    "Error: No se pudieron encontrar los detalles de operación. " + ex.getMessage(),
                     Collections.emptyList());
         }
     }
@@ -88,31 +92,29 @@ public class OperationDetailServiceImpl implements IOperationDetailService {
     @Override
     public CustomDetailMessage updateOperationDetail(Long operationId, Long machineId, Long personId) {
         try {
+
             OperationDetail existingOperationDetail = operationDetailRepository.findById(operationId)
-                    .orElseThrow(() -> new IllegalArgumentException("Error: Detalle de operacion no encontrado."));
+                    .orElseThrow(() -> new IllegalArgumentException("Error: Detalle de operación no encontrado."));
 
-            Person person = (Person) personService.getPersonById(personId).getData().get(0);
-            Machine machine = (Machine) machineService.getMachineById(machineId).getData().get(0)   ;
-
-            if(!person.getIsWorker()){
-                return new CustomDetailMessage(HttpStatus.OK.value(),
-                        "No se puede actualizar la operacion ya que la persona no es un trabajador",
-                        Collections.emptyList());
-            }
+            Person person = getValidPerson(personId);
+            Machine machine = getValidMachine(machineId);
 
             existingOperationDetail.setPerson(person);
             existingOperationDetail.setMachine(machine);
-
             OperationDetail updatedDetail = operationDetailRepository.save(existingOperationDetail);
 
             return new CustomDetailMessage(HttpStatus.OK.value(),
-                    "Detalle de la orden actualizado correctamente",
+                    "Detalle de la operación actualizado correctamente",
                     List.of(updatedDetail));
 
-        } catch (Exception e) {
-            log.error("Error al actualizar el detalle de la orden: {}", e.getMessage(), e);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Error al actualizar el detalle de operación: {}", ex.getMessage());
+            return new CustomDetailMessage(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), Collections.emptyList());
+
+        } catch (Exception ex) {
+            log.error("Error al actualizar el detalle de operación: {}", ex.getMessage(), ex);
             return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Error: No se pudo actualizar el detalle de la orden. " + e.getMessage(),
+                    "Error: No se pudo actualizar el detalle de operación. " + ex.getMessage(),
                     Collections.emptyList());
         }
     }
@@ -121,19 +123,44 @@ public class OperationDetailServiceImpl implements IOperationDetailService {
     public CustomDetailMessage deleteOperationDetail(Long personId, Long machineId) {
         try {
             OperationDetail existingOperationDetail = operationDetailRepository.findByPersonIdAndMachineId(personId, machineId)
-                    .orElseThrow(() -> new IllegalArgumentException("Error: Detalle de operacion no encontrado."));
+                    .orElseThrow(() -> new IllegalArgumentException("Error: Detalle de operación no encontrado."));
 
             operationDetailRepository.delete(existingOperationDetail);
 
             return new CustomDetailMessage(HttpStatus.OK.value(),
-                    "Detalle de operacion eliminado correctamente",
+                    "Detalle de operación eliminado correctamente",
                     Collections.emptyList());
 
-        } catch (Exception e) {
-            log.error("Error al eliminar el detalle de la orden: {}", e.getMessage(), e);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Error al eliminar el detalle de operación: {}", ex.getMessage());
+            return new CustomDetailMessage(HttpStatus.NOT_FOUND.value(), ex.getMessage(), Collections.emptyList());
+
+        } catch (Exception ex) {
+            log.error("Error al eliminar el detalle de operación: {}", ex.getMessage(), ex);
             return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                    "Error: No se pudo eliminar el detalle de operacion. " + e.getMessage(),
+                    "Error: No se pudo eliminar el detalle de operación. " + ex.getMessage(),
                     Collections.emptyList());
         }
     }
+
+    private Person getValidPerson(Long personId) {
+        CustomDetailMessage personMessage = (CustomDetailMessage) personService.getPersonById(personId);
+        if (personMessage.getData().isEmpty()) {
+            throw new IllegalArgumentException("Persona no encontrada");
+        }
+        Person person = (Person) personMessage.getData().get(0);
+        if (!person.getIsWorker()) {
+            throw new IllegalArgumentException("La persona no es un trabajador");
+        }
+        return person;
+    }
+
+    private Machine getValidMachine(Long machineId) {
+        CustomDetailMessage machineMessage = (CustomDetailMessage) machineService.getMachineById(machineId);
+        if (machineMessage.getData().isEmpty()) {
+            throw new IllegalArgumentException("Máquina no encontrada");
+        }
+        return (Machine) machineMessage.getData().get(0);
+    }
 }
+

@@ -12,5 +12,5 @@ public interface IMachineService {
 
     CustomDetailMessage updateMachine(Long id, Machine machine);
 
-    void deleteMachine(Long id);
+    CustomDetailMessage deleteMachine(Long id);
 }

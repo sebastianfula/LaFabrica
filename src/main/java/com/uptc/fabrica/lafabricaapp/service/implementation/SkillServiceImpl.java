@@ -7,6 +7,7 @@ import com.uptc.fabrica.lafabricaapp.utils.CustomDetailMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +60,11 @@ public class SkillServiceImpl implements ISkillService {
     public CustomDetailMessage getAllSkills() {
         try {
             List<Skill> skills = repository.findAll();
+            if (skills.isEmpty()) {
+                return new CustomDetailMessage(HttpStatus.OK.value(),
+                        "No se encontraron habilidades.",
+                        Collections.emptyList());
+            }
             return new CustomDetailMessage(HttpStatus.OK.value(),
                     "Lista de habilidades obtenida correctamente",
                     new ArrayList<>(skills));
@@ -95,16 +101,31 @@ public class SkillServiceImpl implements ISkillService {
     }
 
     @Override
-    public void deleteSkill(Long id) {
+    public CustomDetailMessage deleteSkill(Long id) {
         try {
             if (repository.existsById(id)) {
                 repository.deleteById(id);
-                log.info("Habilidad con ID: " + id + " eliminada correctamente.");
+                log.info("Habilidad eliminada exitosamente: {}", id);
+                return new CustomDetailMessage(HttpStatus.OK.value(),
+                        "Habilidad con ID: " + id + " eliminada correctamente.",
+                        new ArrayList<>());
             } else {
                 log.warn("Error: La habilidad con ID " + id + " no existe.");
+                return new CustomDetailMessage(HttpStatus.NOT_FOUND.value(),
+                        "Error: La habilidad con ID " + id + " no existe.",
+                        new ArrayList<>());
             }
+        } catch (DataIntegrityViolationException e) {
+            log.error("Error al eliminar la habilidad con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la habilidad con ID: " + id +
+                            ". No se puede eliminar porque está siendo utilizada por otras entidades.",
+                    new ArrayList<>());
         } catch (Exception e) {
             log.error("Error al eliminar la habilidad con ID: " + id, e);
+            return new CustomDetailMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error al eliminar la habilidad con ID: ",
+                    new ArrayList<>());
         }
     }
 }
