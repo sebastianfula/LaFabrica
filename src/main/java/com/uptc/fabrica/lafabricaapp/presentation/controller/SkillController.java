@@ -61,10 +61,10 @@ public class SkillController {
 
     @Operation(summary = "Eliminar una habilidad", description = "Elimina una habilidad del sistema.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSkill(
+    public ResponseEntity<CustomDetailMessage> deleteSkill(
             @Parameter(description = "ID de la habilidad a eliminar", required = true)
             @PathVariable Long id) {
-        skillService.deleteSkill(id);
-        return ResponseEntity.noContent().build();
+        CustomDetailMessage responseMessage = skillService.deleteSkill(id);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getCode()));
     }
 }

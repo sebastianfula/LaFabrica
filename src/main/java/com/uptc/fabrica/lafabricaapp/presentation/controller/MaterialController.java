@@ -61,10 +61,10 @@ public class MaterialController {
 
     @Operation(summary = "Eliminar un material", description = "Elimina un material del sistema.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMaterial(
+    public ResponseEntity<CustomDetailMessage> deleteMaterial(
             @Parameter(description = "ID del material a eliminar", required = true)
             @PathVariable Long id) {
-        materialService.deleteMaterial(id);
-        return ResponseEntity.noContent().build();
+        CustomDetailMessage responseMessage = materialService.deleteMaterial(id);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getCode()));
     }
 }
