@@ -58,6 +58,8 @@ Este proyecto consiste en una aplicación para gestionar una fábrica. El objeti
 ```
 Accede a la aplicación en http://localhost:8081.
 
+Para ver las peticiones disponibles, accede a http://localhost:8081/swagger-ui/index.html#/
+
 ## Despliegue con Docker
 El proyecto está configurado para ejecutarse dentro de un contenedor Docker. Para desplegar la aplicación junto con MySQL, utiliza el siguiente comando:
 
